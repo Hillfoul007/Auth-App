@@ -322,6 +322,7 @@ const Index = () => {
             userLocation={currentLocation}
             locationCoordinates={locationCoordinates}
             onBookingComplete={handleBookingComplete}
+            onLoginSuccess={handleLoginSuccess}
           />
         )}
         {currentView === "history" && (
