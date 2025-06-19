@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:backend": "cd backend && npm run dev:standalone",
+    "dev:backend": "cd backend && npm run dev",
     "dev:backend:old": "node server/unified-server.js",
     "dev:full": "concurrently \"npm run dev:backend\" \"npm run dev\"",
     "dev:mongodb": "node scripts/start-mongodb-app.cjs",
