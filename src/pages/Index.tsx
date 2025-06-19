@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ServiceCategories from "../components/ServiceCategories";
 import BookingFlow from "../components/BookingFlow";
-import BookingHistory from "../components/BookingHistory";
+import EnhancedBookingHistory from "../components/EnhancedBookingHistory";
 import Reviews from "../components/Reviews";
 import JoinAsPro from "./JoinAsPro.tsx";
 import AccountMenu from "../components/AccountMenu"; // Can be removed if unused
@@ -290,7 +290,7 @@ const Index = () => {
           />
         )}
         {currentView === "history" && (
-          <BookingHistory currentUser={currentUser} />
+          <EnhancedBookingHistory currentUser={currentUser} />
         )}
         {currentView === "reviews" && <Reviews provider={selectedProvider} />}
         {currentView === "joinAsPro" && (
