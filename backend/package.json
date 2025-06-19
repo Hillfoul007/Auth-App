@@ -6,7 +6,9 @@
   "type": "commonjs",
   "scripts": {
     "start": "node server.js",
+    "start:standalone": "node server-standalone.js",
     "dev": "nodemon server.js",
+    "dev:standalone": "nodemon server-standalone.js",
     "dev:watch": "nodemon server.js",
     "build": "echo 'No build step required for Node.js backend'",
     "test": "echo 'No tests specified' && exit 0"
