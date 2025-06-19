@@ -149,6 +149,65 @@ app.post("/api/auth/login", (req, res) => {
   });
 });
 
+// Check if phone exists
+app.post("/api/auth/check-phone", (req, res) => {
+  const { phone } = req.body;
+
+  if (!phone) {
+    return res.status(400).json({ error: "Phone number is required" });
+  }
+
+  // Mock response - in real app, this would check MongoDB
+  // For demo, return existing user for some numbers
+  const existingNumbers = ["+1234567890", "+9876543210"];
+
+  if (existingNumbers.includes(phone)) {
+    const mockUser = {
+      _id: `user_phone_${phone.replace(/\D/g, "")}`,
+      phone,
+      full_name: "John Doe",
+      user_type: "customer",
+      phone_verified: true,
+      created_at: new Date(),
+      updated_at: new Date(),
+    };
+
+    res.json({ exists: true, user: mockUser });
+  } else {
+    res.json({ exists: false, user: null });
+  }
+});
+
+// Register with phone (after OTP verification)
+app.post("/api/auth/register-phone", (req, res) => {
+  const {
+    phone,
+    full_name,
+    user_type = "customer",
+    phone_verified = true,
+  } = req.body;
+
+  if (!phone || !full_name) {
+    return res.status(400).json({ error: "Phone and full name are required" });
+  }
+
+  // Mock successful registration
+  const mockUser = {
+    _id: `user_phone_${Date.now()}`,
+    phone,
+    full_name,
+    user_type,
+    phone_verified,
+    created_at: new Date(),
+    updated_at: new Date(),
+  };
+
+  res.status(201).json({
+    message: "User registered successfully (mock)",
+    user: mockUser,
+  });
+});
+
 // Mock booking endpoint for testing
 app.post("/api/bookings", (req, res) => {
   const {
