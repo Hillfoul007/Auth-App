@@ -274,15 +274,31 @@ const ServiceCategories: React.FC<ServiceCategoriesProps> = ({
   };
 
   return (
-    <div className="space-y-8 pb-20">
-      <div className="text-center">
-        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-          Our Services
-        </h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Professional services delivered to your doorstep. Choose from our wide
-          range of trusted service providers.
-        </p>
+    <div className="space-y-12 pb-20">
+      <div className="text-center bg-gradient-to-r from-slate-900 to-blue-900 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-12 rounded-b-3xl shadow-2xl">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 tracking-tight">
+            Professional Services
+          </h1>
+          <p className="text-xl text-blue-200 max-w-3xl mx-auto leading-relaxed">
+            Experience premium home services delivered by verified
+            professionals. Your satisfaction is our guarantee.
+          </p>
+          <div className="flex justify-center items-center gap-6 mt-8 text-blue-200">
+            <div className="flex items-center gap-2">
+              <Star className="h-5 w-5 fill-current text-yellow-400" />
+              <span className="font-semibold">4.9/5 Rating</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Zap className="h-5 w-5" />
+              <span className="font-semibold">Same Day Service</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <DollarSign className="h-5 w-5" />
+              <span className="font-semibold">Best Prices</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {categories.map((category) => {
