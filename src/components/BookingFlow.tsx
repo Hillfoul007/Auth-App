@@ -105,11 +105,19 @@ const BookingFlow: React.FC<BookingFlowProps> = ({
   };
 
   const handleBookService = async () => {
+    console.log("🎯 Booking button clicked!");
+    console.log("🔍 Current user check:", currentUser);
+    console.log("🔍 User exists?", !!currentUser);
+    console.log("🔍 User details:", JSON.stringify(currentUser, null, 2));
+
     if (!currentUser) {
+      console.log("❌ No current user found - showing auth modal");
       setError("Please sign in first to book a service");
       setShowAuthModal(true);
       return;
     }
+
+    console.log("✅ User is logged in, proceeding with booking...");
 
     if (!selectedDate || !selectedTime) {
       setError("Please select date and time");
