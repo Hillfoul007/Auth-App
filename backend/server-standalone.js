@@ -157,9 +157,11 @@ app.post("/api/auth/check-phone", (req, res) => {
     return res.status(400).json({ error: "Phone number is required" });
   }
 
+  console.log("Checking phone:", phone);
+
   // Mock response - in real app, this would check MongoDB
   // For demo, return existing user for some numbers
-  const existingNumbers = ["+1234567890", "+9876543210"];
+  const existingNumbers = ["+1234567890", "+9876543210", "+1111111111"];
 
   if (existingNumbers.includes(phone)) {
     const mockUser = {
@@ -172,8 +174,10 @@ app.post("/api/auth/check-phone", (req, res) => {
       updated_at: new Date(),
     };
 
+    console.log("Found existing user:", mockUser);
     res.json({ exists: true, user: mockUser });
   } else {
+    console.log("New user, no existing record");
     res.json({ exists: false, user: null });
   }
 });
