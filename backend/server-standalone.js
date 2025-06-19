@@ -268,6 +268,46 @@ app.post("/api/bookings", (req, res) => {
   });
 });
 
+// Update booking status (for editing/cancelling)
+app.put("/api/bookings/:bookingId/status", (req, res) => {
+  const { bookingId } = req.params;
+  const { status } = req.body;
+
+  console.log(`Updating booking ${bookingId} to status: ${status}`);
+
+  // Mock successful update
+  const updatedBooking = {
+    _id: bookingId,
+    status: status,
+    updated_at: new Date(),
+  };
+
+  res.json({
+    message: "Booking status updated successfully (mock)",
+    booking: updatedBooking,
+  });
+});
+
+// Cancel booking
+app.delete("/api/bookings/:bookingId", (req, res) => {
+  const { bookingId } = req.params;
+  const { user_id, user_type } = req.body;
+
+  console.log(`Cancelling booking ${bookingId} by user ${user_id}`);
+
+  // Mock successful cancellation
+  const cancelledBooking = {
+    _id: bookingId,
+    status: "cancelled",
+    updated_at: new Date(),
+  };
+
+  res.json({
+    message: "Booking cancelled successfully (mock)",
+    booking: cancelledBooking,
+  });
+});
+
 // Mock get customer bookings
 app.get("/api/bookings/customer/:customerId", (req, res) => {
   const { customerId } = req.params;
