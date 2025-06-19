@@ -28,6 +28,15 @@ const AccountMenu: React.FC<AccountMenuProps> = ({
   onViewBookings,
   className = "",
 }) => {
+  // Debug logging
+  console.log(
+    "🔍 AccountMenu render - isLoggedIn:",
+    isLoggedIn,
+    "currentUser:",
+    currentUser,
+    "userEmail:",
+    userEmail,
+  );
   const handleAccountSettings = () => {
     alert(
       "Account Settings\n\n• Change Password\n• Update Profile\n• Notification Preferences\n• Privacy Settings\n• Payment Methods\n\nComing soon!",
