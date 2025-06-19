@@ -43,6 +43,11 @@ const BookingFlow: React.FC<BookingFlowProps> = ({
     locationCoordinates || null,
   );
   const [additionalDetails, setAdditionalDetails] = useState("");
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<{
+    code: string;
+    discount: number;
+  } | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -59,16 +64,42 @@ const BookingFlow: React.FC<BookingFlowProps> = ({
     return provider?.price || 80;
   };
 
+  const getDeliveryCharge = () => {
+    // Fixed delivery charge
+    return 5;
+  };
+
+  const getCouponDiscount = () => {
+    if (!appliedCoupon) return 0;
+    const basePrice = calculateTotalPrice();
+    return Math.round(((basePrice * appliedCoupon.discount) / 100) * 100) / 100;
+  };
+
   const calculateFinalAmount = () => {
     const basePrice = calculateTotalPrice();
-    const serviceCharge = basePrice * 0.1; // 10% service charge
-    const tax = (basePrice + serviceCharge) * 0.12; // 12% GST
-    const subtotal = basePrice + serviceCharge + tax;
+    const deliveryCharge = getDeliveryCharge();
+    const subtotal = basePrice + deliveryCharge;
+    const couponDiscount = getCouponDiscount();
 
-    // 5% discount for orders above $200
-    const discount = subtotal > 200 ? subtotal * 0.05 : 0;
+    return Math.round((subtotal - couponDiscount) * 100) / 100;
+  };
 
-    return Math.round((subtotal - discount) * 100) / 100;
+  const applyCoupon = () => {
+    const code = couponCode.trim().toUpperCase();
+
+    if (code === "FIRST10") {
+      setAppliedCoupon({ code: "FIRST10", discount: 10 });
+      setError("");
+    } else if (code === "") {
+      setError("Please enter a coupon code");
+    } else {
+      setError("Invalid coupon code");
+    }
+  };
+
+  const removeCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode("");
   };
 
   const handleBookService = async () => {
