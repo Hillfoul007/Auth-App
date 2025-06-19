@@ -6,9 +6,13 @@ import Reviews from "../components/Reviews";
 import JoinAsPro from "./JoinAsPro.tsx";
 import AccountMenu from "../components/AccountMenu"; // Can be removed if unused
 import PhoneAuthModal from "../components/PhoneAuthModal";
+import AuthModal from "../components/AuthModal";
 import { ArrowLeft, MapPin, UserCircle } from "lucide-react";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../lib/firebase";
+import {
+  getCurrentUser,
+  isLoggedIn,
+  clearAuthData,
+} from "../integrations/mongodb/client";
 
 const Index = () => {
   const [currentView, setCurrentView] = useState("categories");
@@ -26,19 +30,34 @@ const Index = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
-  // Firebase Auth session
+  // MongoDB Auth session
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setCurrentUser(user);
-        setIsLoggedIn(true);
+    // Check if user is logged in on component mount
+    const checkAuthState = () => {
+      if (isLoggedIn()) {
+        const user = getCurrentUser();
+        if (user) {
+          setCurrentUser(user);
+          setIsLoggedIn(true);
+        } else {
+          setCurrentUser(null);
+          setIsLoggedIn(false);
+        }
       } else {
         setCurrentUser(null);
         setIsLoggedIn(false);
       }
-    });
+    };
 
-    return () => unsubscribe();
+    checkAuthState();
+
+    // Listen for storage changes (when user logs in/out in another tab)
+    const handleStorageChange = () => {
+      checkAuthState();
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
   // Location + cart listener
@@ -181,8 +200,7 @@ const Index = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("firebase_user");
-    localStorage.removeItem("auth_token");
+    clearAuthData();
     setCurrentUser(null);
     setIsLoggedIn(false);
     setCurrentView("categories");
