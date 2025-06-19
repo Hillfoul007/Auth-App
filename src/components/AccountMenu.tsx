@@ -12,6 +12,7 @@ import {
 interface AccountMenuProps {
   isLoggedIn: boolean;
   userEmail: string;
+  currentUser?: any;
   onLogin: () => void;
   onLogout: () => void;
   onViewBookings: () => void;
@@ -21,6 +22,7 @@ interface AccountMenuProps {
 const AccountMenu: React.FC<AccountMenuProps> = ({
   isLoggedIn,
   userEmail,
+  currentUser,
   onLogin,
   onLogout,
   onViewBookings,
@@ -44,7 +46,16 @@ const AccountMenu: React.FC<AccountMenuProps> = ({
     );
   }
 
-  const userName = userEmail.split("@")[0];
+  // Get user's full name from different possible sources
+  const getUserDisplayName = () => {
+    if (currentUser?.full_name) return currentUser.full_name;
+    if (currentUser?.profile?.full_name) return currentUser.profile.full_name;
+    if (currentUser?.displayName) return currentUser.displayName;
+    if (userEmail) return userEmail.split("@")[0];
+    return "User";
+  };
+
+  const userName = getUserDisplayName();
 
   return (
     <DropdownMenu>
@@ -65,8 +76,11 @@ const AccountMenu: React.FC<AccountMenuProps> = ({
         className="w-64 bg-white shadow-xl border border-gray-200 rounded-xl"
       >
         <div className="px-4 py-3 border-b border-gray-100">
-          <p className="text-sm font-medium text-gray-900">Signed in as</p>
+          <p className="text-sm font-medium text-gray-900">{userName}</p>
           <p className="text-sm text-gray-600 truncate">{userEmail}</p>
+          {currentUser?.phone && (
+            <p className="text-xs text-gray-500">{currentUser.phone}</p>
+          )}
         </div>
 
         <DropdownMenuItem
