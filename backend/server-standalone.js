@@ -312,33 +312,69 @@ app.delete("/api/bookings/:bookingId", (req, res) => {
 app.get("/api/bookings/customer/:customerId", (req, res) => {
   const { customerId } = req.params;
 
-  // Mock bookings data
+  console.log("Getting bookings for customer:", customerId);
+
+  // Mock bookings data with more variety
   const mockBookings = [
     {
-      _id: `booking_${Date.now()}`,
+      _id: `booking_${Date.now()}_1`,
       customer_id: customerId,
       service: "House Cleaning",
+      service_type: "Single Service",
+      services: ["House Cleaning"],
       status: "completed",
       scheduled_date: "2024-01-15",
-      scheduled_time: "10:00",
-      total_price: 150,
-      created_at: new Date(Date.now() - 86400000), // 1 day ago
+      scheduled_time: "10:00 AM",
+      provider_name: "CleanPro Services",
+      address: "123 Main St, New York, NY",
+      total_price: 100,
+      final_amount: 95,
+      payment_status: "paid",
+      additional_details: "Deep cleaning requested",
+      created_at: new Date(Date.now() - 86400000 * 7), // 1 week ago
+      updated_at: new Date(Date.now() - 86400000 * 7),
     },
     {
-      _id: `booking_${Date.now() + 1}`,
+      _id: `booking_${Date.now()}_2`,
       customer_id: customerId,
       service: "Plumbing Repair",
+      service_type: "Single Service",
+      services: ["Plumbing Repair"],
+      status: "confirmed",
+      scheduled_date: "2024-01-25",
+      scheduled_time: "2:00 PM",
+      provider_name: "Quick Fix Plumbing",
+      address: "456 Oak Ave, New York, NY",
+      total_price: 150,
+      final_amount: 140,
+      payment_status: "pending",
+      additional_details: "Kitchen sink leak",
+      created_at: new Date(Date.now() - 86400000 * 2), // 2 days ago
+      updated_at: new Date(Date.now() - 86400000 * 2),
+    },
+    {
+      _id: `booking_${Date.now()}_3`,
+      customer_id: customerId,
+      service: "Car Wash",
+      service_type: "Single Service",
+      services: ["Car Wash & Detail"],
       status: "pending",
-      scheduled_date: "2024-01-20",
-      scheduled_time: "14:00",
-      total_price: 200,
+      scheduled_date: "2024-01-30",
+      scheduled_time: "11:00 AM",
+      provider_name: "Auto Shine",
+      address: "789 Park St, New York, NY",
+      total_price: 50,
+      final_amount: 45,
+      payment_status: "pending",
+      additional_details: "SUV exterior and interior cleaning",
       created_at: new Date(),
+      updated_at: new Date(),
     },
   ];
 
   res.json({
     bookings: mockBookings,
-    message: "Mock data - no MongoDB connection",
+    message: "Mock booking history data",
   });
 });
 
