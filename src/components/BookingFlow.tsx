@@ -107,19 +107,11 @@ const BookingFlow: React.FC<BookingFlowProps> = ({
   };
 
   const handleBookService = async () => {
-    console.log("🎯 Booking button clicked!");
-    console.log("🔍 Current user check:", currentUser);
-    console.log("🔍 User exists?", !!currentUser);
-    console.log("🔍 User details:", JSON.stringify(currentUser, null, 2));
-
     if (!currentUser) {
-      console.log("❌ No current user found - showing auth modal");
       setError("Please sign in first to book a service");
       setShowAuthModal(true);
       return;
     }
-
-    console.log("✅ User is logged in, proceeding with booking...");
 
     if (!selectedDate || !selectedTime) {
       setError("Please select date and time");
@@ -176,20 +168,15 @@ const BookingFlow: React.FC<BookingFlowProps> = ({
         },
       };
 
-      console.log("Creating booking with data:", bookingData);
-
       const { data, error: bookingError } =
         await bookingHelpers.createBooking(bookingData);
 
       if (bookingError) {
-        console.error("Booking error:", bookingError);
         setError(bookingError.message || "Failed to create booking");
       } else {
-        console.log("Booking created successfully:", data);
         setShowConfirmation(true);
       }
     } catch (error: any) {
-      console.error("Booking creation error:", error);
       setError(
         error.message ||
           "Network error. Please check your connection and try again.",
@@ -207,7 +194,6 @@ const BookingFlow: React.FC<BookingFlowProps> = ({
   };
 
   const handleLoginSuccess = (user: any) => {
-    console.log("🎉 BookingFlow - Login success received:", user);
     setShowAuthModal(false);
 
     // Call parent's login success handler
