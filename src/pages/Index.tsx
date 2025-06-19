@@ -17,7 +17,10 @@ const Index = () => {
   const [isMultipleServices, setIsMultipleServices] = useState(false);
   const [selectedProvider, setSelectedProvider] = useState(null);
   const [currentLocation, setCurrentLocation] = useState("");
-  const [locationCoordinates, setLocationCoordinates] = useState<{ lat: number; lng: number } | null>(null);
+  const [locationCoordinates, setLocationCoordinates] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -50,7 +53,8 @@ const Index = () => {
     };
 
     window.addEventListener("bookCartServices", handleCartBooking);
-    return () => window.removeEventListener("bookCartServices", handleCartBooking);
+    return () =>
+      window.removeEventListener("bookCartServices", handleCartBooking);
   }, []);
 
   // Google Maps reverse geocoding
@@ -69,10 +73,11 @@ const Index = () => {
           const response = await fetch(
             `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${
               import.meta.env.VITE_GOOGLE_MAPS_API_KEY
-            }`
+            }`,
           );
           const data = await response.json();
-          const address = data.results[0]?.formatted_address || "Unknown Location";
+          const address =
+            data.results[0]?.formatted_address || "Unknown Location";
           setCurrentLocation(address);
         } catch (err) {
           console.error("Geocoding error:", err);
@@ -82,7 +87,7 @@ const Index = () => {
       (err) => {
         console.error("Geolocation error:", err);
         setCurrentLocation("Location access denied");
-      }
+      },
     );
   };
 
@@ -183,7 +188,6 @@ const Index = () => {
                 onViewBookings={() => setCurrentView("history")}
                 className="text-black bg-white hover:bg-gray-50"
               />
-              )}
             </div>
           </div>
         </div>
@@ -212,9 +216,13 @@ const Index = () => {
           <BookingHistory currentUser={currentUser} />
         )}
         {currentView === "reviews" && <Reviews provider={selectedProvider} />}
-        {currentView === "joinAsPro" && <JoinAsPro onBack={function (): void {
-          throw new Error("Function not implemented.");
-        } } />}
+        {currentView === "joinAsPro" && (
+          <JoinAsPro
+            onBack={function (): void {
+              throw new Error("Function not implemented.");
+            }}
+          />
+        )}
       </main>
 
       {/* Auth Modal */}
