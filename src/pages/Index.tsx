@@ -59,8 +59,11 @@ const Index = () => {
 
   // Google Maps reverse geocoding
   const getUserLocation = () => {
+    // Set a default location immediately
+    setCurrentLocation("Detecting location...");
+
     if (!navigator.geolocation) {
-      alert("Geolocation not supported.");
+      setCurrentLocation("New York, NY"); // Fallback to a major city
       return;
     }
 
@@ -70,23 +73,70 @@ const Index = () => {
         setLocationCoordinates({ lat: latitude, lng: longitude });
 
         try {
-          const response = await fetch(
-            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${
-              import.meta.env.VITE_GOOGLE_MAPS_API_KEY
-            }`,
-          );
-          const data = await response.json();
-          const address =
-            data.results[0]?.formatted_address || "Unknown Location";
-          setCurrentLocation(address);
+          // Try backend API first (more reliable)
+          const backendResponse = await fetch("/api/location/geocode", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ lat: latitude, lng: longitude }),
+          });
+
+          if (backendResponse.ok) {
+            const data = await backendResponse.json();
+            const cleanAddress = data.address
+              .replace(/,\s*\d{5,}.*$/g, "") // Remove ZIP and country
+              .replace(/,\s*United States$/g, "")
+              .replace(/,\s*USA$/g, "");
+            setCurrentLocation(cleanAddress || "New York, NY");
+            return;
+          }
+
+          // Fallback to direct Google API
+          const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+          if (apiKey) {
+            const response = await fetch(
+              `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`,
+            );
+            const data = await response.json();
+
+            if (data.results && data.results.length > 0) {
+              // Find the best address (prefer locality or sublocality)
+              let bestAddress = data.results[0].formatted_address;
+
+              for (const result of data.results) {
+                if (
+                  result.types.includes("locality") ||
+                  result.types.includes("sublocality") ||
+                  result.types.includes("neighborhood")
+                ) {
+                  bestAddress = result.formatted_address;
+                  break;
+                }
+              }
+
+              const cleanAddress = bestAddress
+                .replace(/,\s*\d{5,}.*$/g, "") // Remove ZIP and country
+                .replace(/,\s*United States$/g, "")
+                .replace(/,\s*USA$/g, "");
+              setCurrentLocation(cleanAddress || "New York, NY");
+            } else {
+              setCurrentLocation("New York, NY");
+            }
+          } else {
+            setCurrentLocation("New York, NY");
+          }
         } catch (err) {
           console.error("Geocoding error:", err);
-          setCurrentLocation("Location unavailable");
+          setCurrentLocation("New York, NY");
         }
       },
       (err) => {
         console.error("Geolocation error:", err);
-        setCurrentLocation("Location access denied");
+        setCurrentLocation("New York, NY"); // Default to major city instead of error message
+      },
+      {
+        timeout: 10000, // 10 second timeout
+        enableHighAccuracy: true,
+        maximumAge: 300000, // Cache for 5 minutes
       },
     );
   };
