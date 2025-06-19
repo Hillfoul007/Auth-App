@@ -193,9 +193,24 @@ const Index = () => {
   };
 
   const handleLoginSuccess = (user: any) => {
+    console.log("Login success, setting user:", user);
     setCurrentUser(user);
     setIsLoggedIn(true);
     setShowAuthModal(false);
+
+    // Force re-render by triggering auth state check
+    setTimeout(() => {
+      const checkAuthState = () => {
+        if (checkIsLoggedIn()) {
+          const storedUser = getCurrentUser();
+          if (storedUser) {
+            setCurrentUser(storedUser);
+            setIsLoggedIn(true);
+          }
+        }
+      };
+      checkAuthState();
+    }, 100);
   };
 
   const handleLogout = () => {
