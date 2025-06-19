@@ -33,27 +33,21 @@ const Index = () => {
   useEffect(() => {
     // Check if user is logged in on component mount
     const checkAuthState = () => {
-      console.log("Checking auth state...");
       const hasToken = checkIsLoggedIn();
-      console.log("Has token:", hasToken);
 
       if (hasToken) {
         const user = getCurrentUser();
-        console.log("Retrieved user:", user);
 
         if (user) {
           setCurrentUser(user);
           setIsLoggedIn(true);
-          console.log("Set user as logged in:", user);
         } else {
           setCurrentUser(null);
           setIsLoggedIn(false);
-          console.log("No user data, setting as logged out");
         }
       } else {
         setCurrentUser(null);
         setIsLoggedIn(false);
-        console.log("No token, setting as logged out");
       }
     };
 
@@ -177,26 +171,18 @@ const Index = () => {
   };
 
   const handleLoginSuccess = (user: any) => {
-    console.log("🎉 Login success! Received user:", user);
-    console.log("🔑 Setting user in state...");
-
     setCurrentUser(user);
     setIsLoggedIn(true);
     setShowAuthModal(false);
 
-    console.log("✅ State updated - isLoggedIn: true, user:", user);
-
     // Force re-render by triggering auth state check
     setTimeout(() => {
-      console.log("🔄 Double-checking auth state after login...");
       const hasToken = checkIsLoggedIn();
       const storedUser = getCurrentUser();
-      console.log("Token check:", hasToken, "Stored user:", storedUser);
 
       if (hasToken && storedUser) {
         setCurrentUser(storedUser);
         setIsLoggedIn(true);
-        console.log("🎯 Final state confirmed - user logged in");
       }
     }, 100);
   };
