@@ -205,8 +205,14 @@ const BookingFlow: React.FC<BookingFlowProps> = ({
   };
 
   const handleLoginSuccess = (user: any) => {
+    console.log("🎉 BookingFlow - Login success received:", user);
     setShowAuthModal(false);
-    // The user will be set in the parent component
+
+    // Need to trigger parent component to update state
+    // For now, we'll rely on localStorage and force a page refresh of auth state
+    setTimeout(() => {
+      window.location.reload();
+    }, 100);
   };
 
   if (showConfirmation) {
