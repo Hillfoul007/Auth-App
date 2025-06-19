@@ -203,28 +203,38 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b sticky top-0 z-30">
+      <header className="bg-gradient-to-r from-slate-900 to-blue-900 shadow-xl sticky top-0 z-30 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-14 sm:h-16">
-            <div className="flex items-center gap-3">
+          <div className="flex justify-between items-center h-16 sm:h-18">
+            <div className="flex items-center gap-4">
               {currentView !== "categories" && (
                 <button
                   onClick={navigateBack}
-                  className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                  className="p-2 hover:bg-white/10 rounded-full transition-colors"
                 >
-                  <ArrowLeft className="h-5 w-5 text-gray-600" />
+                  <ArrowLeft className="h-5 w-5 text-white" />
                 </button>
               )}
-              <h1 className="text-lg sm:text-xl font-bold text-gray-900">
-                Home Services
-              </h1>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">H</span>
+                </div>
+                <div>
+                  <h1 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+                    HomeServices Pro
+                  </h1>
+                  <p className="text-blue-200 text-xs hidden sm:block">
+                    Professional Services Platform
+                  </p>
+                </div>
+              </div>
             </div>
 
-            <div className="flex items-center gap-2 sm:gap-4">
-              <div className="flex items-center gap-1 text-sm text-gray-600">
-                <MapPin className="h-4 w-4" />
-                <span className="hidden sm:inline">
-                  {currentLocation || "Select location"}
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="flex items-center gap-2 px-3 py-2 bg-white/10 backdrop-blur-md rounded-lg border border-white/20 hover:bg-white/20 transition-all duration-300">
+                <MapPin className="h-4 w-4 text-blue-300" />
+                <span className="hidden sm:inline text-white font-medium text-sm">
+                  {currentLocation || "Detecting location..."}
                 </span>
               </div>
 
