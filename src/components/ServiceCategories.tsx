@@ -321,7 +321,7 @@ const ServiceCategories: React.FC<ServiceCategoriesProps> = ({
                 return (
                   <Card
                     key={service.id}
-                    className="hover:shadow-lg transition-shadow cursor-pointer group"
+                    className="hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 cursor-pointer group border-0 bg-white shadow-lg rounded-2xl overflow-hidden"
                   >
                     <CardHeader className="pb-3">
                       <div className="flex justify-between items-start">
