@@ -10,7 +10,7 @@ import AuthModal from "../components/AuthModal";
 import { ArrowLeft, MapPin, UserCircle } from "lucide-react";
 import {
   getCurrentUser,
-  isLoggedIn,
+  isLoggedIn as checkIsLoggedIn,
   clearAuthData,
 } from "../integrations/mongodb/client";
 
@@ -34,7 +34,7 @@ const Index = () => {
   useEffect(() => {
     // Check if user is logged in on component mount
     const checkAuthState = () => {
-      if (isLoggedIn()) {
+      if (checkIsLoggedIn()) {
         const user = getCurrentUser();
         if (user) {
           setCurrentUser(user);
