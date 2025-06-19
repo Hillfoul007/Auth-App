@@ -70,10 +70,24 @@ app.get("/api/test", (req, res) => {
     endpoints: [
       "GET /health - Health check",
       "GET /api/test - API test",
+      "POST /api/auth/register - User registration (mock)",
+      "POST /api/auth/login - User login (mock)",
       "POST /api/bookings - Create booking (mock)",
       "GET /api/bookings/customer/:id - Get customer bookings (mock)",
     ],
     timestamp: new Date().toISOString(),
+  });
+});
+
+// Debug endpoint to check request data
+app.all("/api/debug/*", (req, res) => {
+  res.json({
+    method: req.method,
+    url: req.url,
+    headers: req.headers,
+    body: req.body,
+    query: req.query,
+    params: req.params,
   });
 });
 
