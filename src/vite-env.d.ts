@@ -1,0 +1,4 @@
+/// <reference types="vite/client" />
+// Supabase Configuration
+// VITE_SUPABASE_URL=https://ognwbfuqkhjareqyvefk.supabase.co
+// VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9nbndiZnVxa2hqYXJlcXl2ZWZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkyNzI2NjIsImV4cCI6MjA2NDg0ODY2Mn0.gu2yX7bG0uFuKgc_TpF75WIQD7gnsi_4NpE0GPMKbOI
