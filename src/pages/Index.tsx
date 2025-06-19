@@ -174,49 +174,15 @@ const Index = () => {
               </div>
 
               {/* Auth Buttons */}
-              {isLoggedIn && currentUser ? (
-                <div className="relative profile-menu">
-                  <button
-                    onClick={() => setShowDropdown((prev) => !prev)}
-                    className="p-1.5 rounded-full hover:bg-gray-100 transition"
-                  >
-                    {currentUser.photoURL ? (
-                      <img
-                        src={currentUser.photoURL}
-                        alt="user"
-                        className="w-8 h-8 rounded-full object-cover"
-                      />
-                    ) : (
-                      <UserCircle className="w-7 h-7 text-gray-700" />
-                    )}
-                  </button>
-
-                  {showDropdown && (
-                    <div className="absolute right-0 mt-2 w-56 bg-white border rounded-lg shadow-md z-50 p-4 text-sm">
-                      <p className="font-medium text-gray-800">
-                        {currentUser.displayName || "No Name"}
-                      </p>
-                      <p className="text-gray-500 text-xs mb-2">
-                        {currentUser.phoneNumber || "No Phone"}
-                      </p>
-
-                      
-                      <button
-                        onClick={handleLogout}
-                        className="text-red-600 hover:underline text-left w-full"
-                      >
-                        Logout
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <button
-                  onClick={() => setShowAuthModal(true)}
-                  className="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  Sign In
-                </button>
+              <AccountMenu
+                isLoggedIn={isLoggedIn}
+                userEmail={currentUser?.email || ""}
+                currentUser={currentUser}
+                onLogin={() => setShowAuthModal(true)}
+                onLogout={handleLogout}
+                onViewBookings={() => setCurrentView("history")}
+                className="text-black bg-white hover:bg-gray-50"
+              />
               )}
             </div>
           </div>
