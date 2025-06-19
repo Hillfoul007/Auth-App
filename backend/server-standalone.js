@@ -77,6 +77,64 @@ app.get("/api/test", (req, res) => {
   });
 });
 
+// Mock authentication endpoints
+app.post("/api/auth/register", (req, res) => {
+  const { email, password, name, phone } = req.body;
+
+  if (!email || !password || !name) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
+  // Mock successful registration
+  const mockUser = {
+    _id: `user_${Date.now()}`,
+    email,
+    full_name: name,
+    phone: phone || "",
+    user_type: "customer",
+    created_at: new Date(),
+    updated_at: new Date(),
+  };
+
+  const mockToken = `mock_token_${Date.now()}`;
+
+  res.status(201).json({
+    message: "User registered successfully (mock)",
+    user: mockUser,
+    token: mockToken,
+  });
+});
+
+app.post("/api/auth/login", (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ error: "Email and password are required" });
+  }
+
+  // Mock successful login - create user if doesn't exist
+  const mockUser = {
+    _id: `user_${Date.now()}`,
+    email,
+    full_name: email
+      .split("@")[0]
+      .replace(/[^a-zA-Z]/g, " ")
+      .replace(/\b\w/g, (l) => l.toUpperCase()),
+    phone: "+1234567890",
+    user_type: "customer",
+    created_at: new Date(),
+    updated_at: new Date(),
+  };
+
+  const mockToken = `mock_token_${Date.now()}`;
+
+  res.json({
+    message: "Login successful (mock)",
+    user: mockUser,
+    token: mockToken,
+  });
+});
+
 // Mock booking endpoint for testing
 app.post("/api/bookings", (req, res) => {
   const {
@@ -91,22 +149,27 @@ app.post("/api/bookings", (req, res) => {
     total_price,
   } = req.body;
 
+  // Handle missing customer_id gracefully
+  const effectiveCustomerId = customer_id || `mock_customer_${Date.now()}`;
+
   // Basic validation
   if (
-    !customer_id ||
     !service ||
     !scheduled_date ||
     !scheduled_time ||
     !address ||
     !total_price
   ) {
-    return res.status(400).json({ error: "Missing required fields" });
+    return res.status(400).json({
+      error: "Missing required fields",
+      details: "Please provide service, date, time, address, and price",
+    });
   }
 
   // Mock successful booking creation
   const mockBooking = {
     _id: `booking_${Date.now()}`,
-    customer_id,
+    customer_id: effectiveCustomerId,
     service,
     service_type: service_type || "Single Service",
     services: services || [service],
