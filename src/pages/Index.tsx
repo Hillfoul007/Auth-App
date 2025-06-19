@@ -92,20 +92,27 @@ const Index = () => {
 
         try {
           // Try backend API first (more reliable)
-          const backendResponse = await fetch("/api/location/geocode", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ lat: latitude, lng: longitude }),
-          });
+          try {
+            const backendResponse = await fetch("/api/location/geocode", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ lat: latitude, lng: longitude }),
+            });
 
-          if (backendResponse.ok) {
-            const data = await backendResponse.json();
-            const cleanAddress = data.address
-              .replace(/,\s*\d{5,}.*$/g, "") // Remove ZIP and country
-              .replace(/,\s*United States$/g, "")
-              .replace(/,\s*USA$/g, "");
-            setCurrentLocation(cleanAddress || "New York, NY");
-            return;
+            if (backendResponse.ok) {
+              const data = await backendResponse.json();
+              const cleanAddress = data.address
+                .replace(/,\s*\d{5,}.*$/g, "") // Remove ZIP and country
+                .replace(/,\s*United States$/g, "")
+                .replace(/,\s*USA$/g, "");
+              setCurrentLocation(cleanAddress || "New York, NY");
+              return;
+            }
+          } catch (backendError) {
+            console.log(
+              "Backend geocoding failed, trying Google API:",
+              backendError,
+            );
           }
 
           // Fallback to direct Google API
