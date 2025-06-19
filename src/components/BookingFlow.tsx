@@ -26,7 +26,8 @@ interface BookingFlowProps {
   currentUser?: any;
   userLocation?: string;
   locationCoordinates?: { lat: number; lng: number } | null;
-  onBookingComplete?: () => void;
+  onBookingComplete: () => void;
+  onLoginSuccess?: (user: any) => void;
 }
 
 const BookingFlow: React.FC<BookingFlowProps> = ({
@@ -37,6 +38,7 @@ const BookingFlow: React.FC<BookingFlowProps> = ({
   userLocation,
   locationCoordinates,
   onBookingComplete,
+  onLoginSuccess,
 }) => {
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTime, setSelectedTime] = useState("");
@@ -208,11 +210,10 @@ const BookingFlow: React.FC<BookingFlowProps> = ({
     console.log("🎉 BookingFlow - Login success received:", user);
     setShowAuthModal(false);
 
-    // Need to trigger parent component to update state
-    // For now, we'll rely on localStorage and force a page refresh of auth state
-    setTimeout(() => {
-      window.location.reload();
-    }, 100);
+    // Call parent's login success handler
+    if (onLoginSuccess) {
+      onLoginSuccess(user);
+    }
   };
 
   if (showConfirmation) {
