@@ -5,8 +5,7 @@ import BookingHistory from "../components/BookingHistory";
 import Reviews from "../components/Reviews";
 import JoinAsPro from "./JoinAsPro.tsx";
 import AccountMenu from "../components/AccountMenu"; // Can be removed if unused
-import PhoneAuthModal from "../components/PhoneAuthModal";
-import AuthModal from "../components/AuthModal";
+import PhoneOTPAuthModal from "../components/PhoneOTPAuthModal";
 import { ArrowLeft, MapPin, UserCircle } from "lucide-react";
 import {
   getCurrentUser,
@@ -304,7 +303,7 @@ const Index = () => {
       </main>
 
       {/* Auth Modal */}
-      <AuthModal
+      <PhoneOTPAuthModal
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
         onSuccess={handleLoginSuccess}
