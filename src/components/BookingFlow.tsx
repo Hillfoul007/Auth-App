@@ -14,7 +14,7 @@ import {
   Phone,
 } from "lucide-react";
 import DateTimePicker from "./DateTimePicker";
-import PhoneAuthModal from "./PhoneAuthModal";
+import SimplePhoneAuthModal from "./SimplePhoneAuthModal";
 import LocationDetector from "./LocationDetector.tsx";
 import BookingConfirmation from "./BookingConfirmation";
 import { bookingHelpers } from "@/integrations/mongodb/client";
@@ -454,7 +454,7 @@ const BookingFlow: React.FC<BookingFlowProps> = ({
       </div>
 
       {/* Authentication Modal */}
-      <PhoneAuthModal
+      <SimplePhoneAuthModal
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
         onSuccess={handleLoginSuccess}
