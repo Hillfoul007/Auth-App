@@ -8,11 +8,8 @@ const connectDB = async () => {
     console.log("🔄 Connecting to MongoDB...");
 
     const conn = await mongoose.connect(mongoURI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
       serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
       socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
-      bufferMaxEntries: 0,
       user: process.env.MONGODB_USERNAME || "sunflower110001",
       pass: process.env.MONGODB_PASSWORD,
     });
