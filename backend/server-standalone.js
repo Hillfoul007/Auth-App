@@ -79,6 +79,41 @@ app.get("/api/test", (req, res) => {
   });
 });
 
+// Location endpoints for geocoding
+app.post("/api/location/geocode", (req, res) => {
+  const { lat, lng } = req.body;
+
+  if (!lat || !lng) {
+    return res
+      .status(400)
+      .json({ error: "Latitude and longitude are required" });
+  }
+
+  // Mock geocoding response
+  const mockAddress = "New York, NY, USA";
+
+  res.json({
+    address: mockAddress,
+    components: [],
+    geometry: { location: { lat, lng } },
+  });
+});
+
+app.post("/api/location/coordinates", (req, res) => {
+  const { address } = req.body;
+
+  if (!address) {
+    return res.status(400).json({ error: "Address is required" });
+  }
+
+  // Mock coordinates response
+  res.json({
+    coordinates: { lat: 40.7128, lng: -74.006 }, // NYC coordinates
+    formatted_address: address,
+    components: [],
+  });
+});
+
 // Debug endpoint to check request data
 app.all("/api/debug/*", (req, res) => {
   res.json({
