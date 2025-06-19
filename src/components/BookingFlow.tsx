@@ -361,29 +361,53 @@ const BookingFlow: React.FC<BookingFlowProps> = ({
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span>Base Price</span>
+                  <span>Service Price</span>
                   <span>${calculateTotalPrice()}</span>
                 </div>
                 <div className="flex justify-between text-sm text-gray-600">
-                  <span>Service Charge (10%)</span>
-                  <span>${(calculateTotalPrice() * 0.1).toFixed(2)}</span>
+                  <span>Delivery Charge</span>
+                  <span>${getDeliveryCharge()}</span>
                 </div>
-                <div className="flex justify-between text-sm text-gray-600">
-                  <span>Tax (12% GST)</span>
-                  <span>
-                    $
-                    {(
-                      (calculateTotalPrice() + calculateTotalPrice() * 0.1) *
-                      0.12
-                    ).toFixed(2)}
-                  </span>
-                </div>
-                {calculateFinalAmount() > 200 && (
+                {appliedCoupon && (
                   <div className="flex justify-between text-sm text-green-600">
-                    <span>Discount (5%)</span>
-                    <span>-${(calculateTotalPrice() * 0.05).toFixed(2)}</span>
+                    <span>
+                      Coupon ({appliedCoupon.code}) - {appliedCoupon.discount}%
+                      off
+                    </span>
+                    <span>-${getCouponDiscount()}</span>
                   </div>
                 )}
+              </div>
+
+              {/* Coupon Section */}
+              <div className="border-t pt-4">
+                <Label htmlFor="coupon" className="text-sm font-medium">
+                  Have a coupon?
+                </Label>
+                <div className="flex gap-2 mt-2">
+                  <Input
+                    id="coupon"
+                    placeholder="Enter coupon code"
+                    value={couponCode}
+                    onChange={(e) =>
+                      setCouponCode(e.target.value.toUpperCase())
+                    }
+                    disabled={!!appliedCoupon}
+                    className="flex-1"
+                  />
+                  {appliedCoupon ? (
+                    <Button variant="outline" onClick={removeCoupon} size="sm">
+                      Remove
+                    </Button>
+                  ) : (
+                    <Button variant="outline" onClick={applyCoupon} size="sm">
+                      Apply
+                    </Button>
+                  )}
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Try "FIRST10" for 10% off your first order!
+                </p>
               </div>
 
               <div className="border-t pt-2">
