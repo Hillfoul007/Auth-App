@@ -5,15 +5,19 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:backend": "node server/unified-server.js",
+    "dev:backend": "cd backend && npm run dev:standalone",
+    "dev:backend:old": "node server/unified-server.js",
     "dev:full": "concurrently \"npm run dev:backend\" \"npm run dev\"",
     "dev:mongodb": "node scripts/start-mongodb-app.cjs",
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start:backend": "node server/complete-server.js",
-    "init:db": "node scripts/init-database.js"
+    "start:backend": "cd backend && npm start",
+    "start:backend:old": "node server/complete-server.js",
+    "init:db": "node scripts/init-database.js",
+    "install:backend": "cd backend && npm install",
+    "setup": "npm install && npm run install:backend"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

@@ -33,24 +33,14 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
 }) => {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
-  // Generate time slots from 8 AM to 8 PM
+  // Generate time slots from 8 AM to 8 PM (1 hour intervals)
   const generateTimeSlots = () => {
     const slots = [];
     for (let hour = 8; hour <= 20; hour++) {
-      // Add :00 slot
+      // Add :00 slot only (1 hour intervals)
       const time24 = `${hour.toString().padStart(2, "0")}:00`;
       const time12 = format(new Date(`2000-01-01T${time24}`), "h:mm a");
       slots.push({ value: time12, label: time12 });
-
-      // Add :30 slot (except for 8 PM)
-      if (hour < 20) {
-        const time24Half = `${hour.toString().padStart(2, "0")}:30`;
-        const time12Half = format(
-          new Date(`2000-01-01T${time24Half}`),
-          "h:mm a",
-        );
-        slots.push({ value: time12Half, label: time12Half });
-      }
     }
     return slots;
   };

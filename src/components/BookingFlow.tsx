@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -43,6 +45,11 @@ const BookingFlow: React.FC<BookingFlowProps> = ({
     locationCoordinates || null,
   );
   const [additionalDetails, setAdditionalDetails] = useState("");
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<{
+    code: string;
+    discount: number;
+  } | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -59,20 +66,47 @@ const BookingFlow: React.FC<BookingFlowProps> = ({
     return provider?.price || 80;
   };
 
+  const getDeliveryCharge = () => {
+    // Fixed delivery charge
+    return 5;
+  };
+
+  const getCouponDiscount = () => {
+    if (!appliedCoupon) return 0;
+    const basePrice = calculateTotalPrice();
+    return Math.round(((basePrice * appliedCoupon.discount) / 100) * 100) / 100;
+  };
+
   const calculateFinalAmount = () => {
     const basePrice = calculateTotalPrice();
-    const serviceCharge = basePrice * 0.1; // 10% service charge
-    const tax = (basePrice + serviceCharge) * 0.12; // 12% GST
-    const subtotal = basePrice + serviceCharge + tax;
+    const deliveryCharge = getDeliveryCharge();
+    const subtotal = basePrice + deliveryCharge;
+    const couponDiscount = getCouponDiscount();
 
-    // 5% discount for orders above $200
-    const discount = subtotal > 200 ? subtotal * 0.05 : 0;
+    return Math.round((subtotal - couponDiscount) * 100) / 100;
+  };
 
-    return Math.round((subtotal - discount) * 100) / 100;
+  const applyCoupon = () => {
+    const code = couponCode.trim().toUpperCase();
+
+    if (code === "FIRST10") {
+      setAppliedCoupon({ code: "FIRST10", discount: 10 });
+      setError("");
+    } else if (code === "") {
+      setError("Please enter a coupon code");
+    } else {
+      setError("Invalid coupon code");
+    }
+  };
+
+  const removeCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode("");
   };
 
   const handleBookService = async () => {
     if (!currentUser) {
+      setError("Please sign in first to book a service");
       setShowAuthModal(true);
       return;
     }
@@ -87,12 +121,21 @@ const BookingFlow: React.FC<BookingFlowProps> = ({
       return;
     }
 
+    // Ensure we have a valid customer ID
+    const customerId = currentUser._id || currentUser.uid || currentUser.id;
+    if (!customerId) {
+      setError("User authentication error. Please sign in again.");
+      setShowAuthModal(true);
+      return;
+    }
+
     setIsProcessing(true);
     setError("");
 
     try {
+      const customerId = currentUser._id || currentUser.uid || currentUser.id;
       const bookingData = {
-        customer_id: currentUser._id || currentUser.uid,
+        customer_id: customerId,
         service: isMultipleServices
           ? services.map((s) => s.name).join(", ")
           : provider?.name || "Service",
@@ -123,16 +166,24 @@ const BookingFlow: React.FC<BookingFlowProps> = ({
         },
       };
 
+      console.log("Creating booking with data:", bookingData);
+
       const { data, error: bookingError } =
         await bookingHelpers.createBooking(bookingData);
 
       if (bookingError) {
-        setError(bookingError.message);
+        console.error("Booking error:", bookingError);
+        setError(bookingError.message || "Failed to create booking");
       } else {
+        console.log("Booking created successfully:", data);
         setShowConfirmation(true);
       }
     } catch (error: any) {
-      setError(error.message || "Failed to create booking");
+      console.error("Booking creation error:", error);
+      setError(
+        error.message ||
+          "Network error. Please check your connection and try again.",
+      );
     } finally {
       setIsProcessing(false);
     }
@@ -151,25 +202,26 @@ const BookingFlow: React.FC<BookingFlowProps> = ({
   };
 
   if (showConfirmation) {
-  return (
-    <BookingConfirmation
-      bookingData={{
-        services: isMultipleServices ? services : [{ name: provider?.name, price: provider?.price }],
-        selectedDate: selectedDate!,
-        selectedTime,
-        selectedAddress,
-        additionalDetails,
-        isMultipleServices,
-        provider,
-        currentUser,
-      }}
-      onConfirmBooking={handleBookService}
-      onBack={() => setShowConfirmation(false)}
-      isProcessing={isProcessing}
-    />
-  );
-}
-
+    return (
+      <BookingConfirmation
+        bookingData={{
+          services: isMultipleServices
+            ? services
+            : [{ name: provider?.name, price: provider?.price }],
+          selectedDate: selectedDate!,
+          selectedTime,
+          selectedAddress,
+          additionalDetails,
+          isMultipleServices,
+          provider,
+          currentUser,
+        }}
+        onConfirmBooking={handleBookService}
+        onBack={() => setShowConfirmation(false)}
+        isProcessing={isProcessing}
+      />
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -270,17 +322,16 @@ const BookingFlow: React.FC<BookingFlowProps> = ({
             </CardHeader>
             <CardContent>
               <LocationDetector
-  onAddressSelect={(address, coordinates) => {
-    setSelectedAddress(address);
-    setAddressCoordinates(coordinates);
-  }}
-  onLocationChange={(location, coordinates) => {
-    setSelectedAddress(location);
-    setAddressCoordinates(coordinates || null);
-  }}
-  defaultValue={selectedAddress}
-/>
-
+                onAddressSelect={(address, coordinates) => {
+                  setSelectedAddress(address);
+                  setAddressCoordinates(coordinates);
+                }}
+                onLocationChange={(location, coordinates) => {
+                  setSelectedAddress(location);
+                  setAddressCoordinates(coordinates || null);
+                }}
+                defaultValue={selectedAddress}
+              />
             </CardContent>
           </Card>
 
@@ -312,29 +363,53 @@ const BookingFlow: React.FC<BookingFlowProps> = ({
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span>Base Price</span>
+                  <span>Service Price</span>
                   <span>${calculateTotalPrice()}</span>
                 </div>
                 <div className="flex justify-between text-sm text-gray-600">
-                  <span>Service Charge (10%)</span>
-                  <span>${(calculateTotalPrice() * 0.1).toFixed(2)}</span>
+                  <span>Delivery Charge</span>
+                  <span>${getDeliveryCharge()}</span>
                 </div>
-                <div className="flex justify-between text-sm text-gray-600">
-                  <span>Tax (12% GST)</span>
-                  <span>
-                    $
-                    {(
-                      (calculateTotalPrice() + calculateTotalPrice() * 0.1) *
-                      0.12
-                    ).toFixed(2)}
-                  </span>
-                </div>
-                {calculateFinalAmount() > 200 && (
+                {appliedCoupon && (
                   <div className="flex justify-between text-sm text-green-600">
-                    <span>Discount (5%)</span>
-                    <span>-${(calculateTotalPrice() * 0.05).toFixed(2)}</span>
+                    <span>
+                      Coupon ({appliedCoupon.code}) - {appliedCoupon.discount}%
+                      off
+                    </span>
+                    <span>-${getCouponDiscount()}</span>
                   </div>
                 )}
+              </div>
+
+              {/* Coupon Section */}
+              <div className="border-t pt-4">
+                <Label htmlFor="coupon" className="text-sm font-medium">
+                  Have a coupon?
+                </Label>
+                <div className="flex gap-2 mt-2">
+                  <Input
+                    id="coupon"
+                    placeholder="Enter coupon code"
+                    value={couponCode}
+                    onChange={(e) =>
+                      setCouponCode(e.target.value.toUpperCase())
+                    }
+                    disabled={!!appliedCoupon}
+                    className="flex-1"
+                  />
+                  {appliedCoupon ? (
+                    <Button variant="outline" onClick={removeCoupon} size="sm">
+                      Remove
+                    </Button>
+                  ) : (
+                    <Button variant="outline" onClick={applyCoupon} size="sm">
+                      Apply
+                    </Button>
+                  )}
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Try "FIRST10" for 10% off your first order!
+                </p>
               </div>
 
               <div className="border-t pt-2">

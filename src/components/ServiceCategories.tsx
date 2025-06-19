@@ -274,24 +274,42 @@ const ServiceCategories: React.FC<ServiceCategoriesProps> = ({
   };
 
   return (
-    <div className="space-y-8 pb-20">
-      <div className="text-center">
-        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-          Our Services
-        </h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Professional services delivered to your doorstep. Choose from our wide
-          range of trusted service providers.
-        </p>
+    <div className="space-y-12 pb-20">
+      <div className="text-center bg-gradient-to-r from-slate-900 to-blue-900 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-12 rounded-b-3xl shadow-2xl">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 tracking-tight">
+            Professional Services
+          </h1>
+          <p className="text-xl text-blue-200 max-w-3xl mx-auto leading-relaxed">
+            Experience premium home services delivered by verified
+            professionals. Your satisfaction is our guarantee.
+          </p>
+          <div className="flex justify-center items-center gap-6 mt-8 text-blue-200">
+            <div className="flex items-center gap-2">
+              <Star className="h-5 w-5 fill-current text-yellow-400" />
+              <span className="font-semibold">4.9/5 Rating</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Zap className="h-5 w-5" />
+              <span className="font-semibold">Same Day Service</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <DollarSign className="h-5 w-5" />
+              <span className="font-semibold">Best Prices</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {categories.map((category) => {
         const Icon = category.icon;
         return (
-          <div key={category.name} className="space-y-4">
-            <div className="flex items-center gap-3">
-              <Icon className="h-6 w-6 text-blue-600" />
-              <h2 className="text-2xl font-semibold text-gray-900">
+          <div key={category.name} className="space-y-6">
+            <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-slate-100 to-blue-100 rounded-2xl border border-slate-200">
+              <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg">
+                <Icon className="h-6 w-6 text-white" />
+              </div>
+              <h2 className="text-2xl font-bold text-slate-800 tracking-tight">
                 {category.name}
               </h2>
             </div>
@@ -303,7 +321,7 @@ const ServiceCategories: React.FC<ServiceCategoriesProps> = ({
                 return (
                   <Card
                     key={service.id}
-                    className="hover:shadow-lg transition-shadow cursor-pointer group"
+                    className="hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 cursor-pointer group border-0 bg-white shadow-lg rounded-2xl overflow-hidden"
                   >
                     <CardHeader className="pb-3">
                       <div className="flex justify-between items-start">
