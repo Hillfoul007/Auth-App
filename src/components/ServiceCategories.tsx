@@ -304,10 +304,12 @@ const ServiceCategories: React.FC<ServiceCategoriesProps> = ({
       {categories.map((category) => {
         const Icon = category.icon;
         return (
-          <div key={category.name} className="space-y-4">
-            <div className="flex items-center gap-3">
-              <Icon className="h-6 w-6 text-blue-600" />
-              <h2 className="text-2xl font-semibold text-gray-900">
+          <div key={category.name} className="space-y-6">
+            <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-slate-100 to-blue-100 rounded-2xl border border-slate-200">
+              <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg">
+                <Icon className="h-6 w-6 text-white" />
+              </div>
+              <h2 className="text-2xl font-bold text-slate-800 tracking-tight">
                 {category.name}
               </h2>
             </div>
