@@ -73,6 +73,7 @@ const BookingFlow: React.FC<BookingFlowProps> = ({
 
   const handleBookService = async () => {
     if (!currentUser) {
+      setError("Please sign in first to book a service");
       setShowAuthModal(true);
       return;
     }
@@ -87,12 +88,21 @@ const BookingFlow: React.FC<BookingFlowProps> = ({
       return;
     }
 
+    // Ensure we have a valid customer ID
+    const customerId = currentUser._id || currentUser.uid || currentUser.id;
+    if (!customerId) {
+      setError("User authentication error. Please sign in again.");
+      setShowAuthModal(true);
+      return;
+    }
+
     setIsProcessing(true);
     setError("");
 
     try {
+      const customerId = currentUser._id || currentUser.uid || currentUser.id;
       const bookingData = {
-        customer_id: currentUser._id || currentUser.uid,
+        customer_id: customerId,
         service: isMultipleServices
           ? services.map((s) => s.name).join(", ")
           : provider?.name || "Service",
@@ -123,16 +133,24 @@ const BookingFlow: React.FC<BookingFlowProps> = ({
         },
       };
 
+      console.log("Creating booking with data:", bookingData);
+
       const { data, error: bookingError } =
         await bookingHelpers.createBooking(bookingData);
 
       if (bookingError) {
-        setError(bookingError.message);
+        console.error("Booking error:", bookingError);
+        setError(bookingError.message || "Failed to create booking");
       } else {
+        console.log("Booking created successfully:", data);
         setShowConfirmation(true);
       }
     } catch (error: any) {
-      setError(error.message || "Failed to create booking");
+      console.error("Booking creation error:", error);
+      setError(
+        error.message ||
+          "Network error. Please check your connection and try again.",
+      );
     } finally {
       setIsProcessing(false);
     }
@@ -151,25 +169,26 @@ const BookingFlow: React.FC<BookingFlowProps> = ({
   };
 
   if (showConfirmation) {
-  return (
-    <BookingConfirmation
-      bookingData={{
-        services: isMultipleServices ? services : [{ name: provider?.name, price: provider?.price }],
-        selectedDate: selectedDate!,
-        selectedTime,
-        selectedAddress,
-        additionalDetails,
-        isMultipleServices,
-        provider,
-        currentUser,
-      }}
-      onConfirmBooking={handleBookService}
-      onBack={() => setShowConfirmation(false)}
-      isProcessing={isProcessing}
-    />
-  );
-}
-
+    return (
+      <BookingConfirmation
+        bookingData={{
+          services: isMultipleServices
+            ? services
+            : [{ name: provider?.name, price: provider?.price }],
+          selectedDate: selectedDate!,
+          selectedTime,
+          selectedAddress,
+          additionalDetails,
+          isMultipleServices,
+          provider,
+          currentUser,
+        }}
+        onConfirmBooking={handleBookService}
+        onBack={() => setShowConfirmation(false)}
+        isProcessing={isProcessing}
+      />
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -270,17 +289,16 @@ const BookingFlow: React.FC<BookingFlowProps> = ({
             </CardHeader>
             <CardContent>
               <LocationDetector
-  onAddressSelect={(address, coordinates) => {
-    setSelectedAddress(address);
-    setAddressCoordinates(coordinates);
-  }}
-  onLocationChange={(location, coordinates) => {
-    setSelectedAddress(location);
-    setAddressCoordinates(coordinates || null);
-  }}
-  defaultValue={selectedAddress}
-/>
-
+                onAddressSelect={(address, coordinates) => {
+                  setSelectedAddress(address);
+                  setAddressCoordinates(coordinates);
+                }}
+                onLocationChange={(location, coordinates) => {
+                  setSelectedAddress(location);
+                  setAddressCoordinates(coordinates || null);
+                }}
+                defaultValue={selectedAddress}
+              />
             </CardContent>
           </Card>
 
