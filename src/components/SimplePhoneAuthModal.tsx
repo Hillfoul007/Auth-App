@@ -99,8 +99,14 @@ const SimplePhoneAuthModal: React.FC<SimplePhoneAuthModalProps> = ({
       });
 
       if (response.ok) {
-        const data = await response.json();
-        return data.exists ? data.user : null;
+        const text = await response.text();
+        try {
+          const data = JSON.parse(text);
+          return data.exists ? data.user : null;
+        } catch (jsonError) {
+          console.error("Invalid JSON response:", text);
+          return null;
+        }
       }
       return null;
     } catch (error) {
@@ -117,14 +123,27 @@ const SimplePhoneAuthModal: React.FC<SimplePhoneAuthModalProps> = ({
         body: JSON.stringify(userData),
       });
 
-      const data = await response.json();
-      if (response.ok) {
-        return { data: data.user, error: null };
-      } else {
-        return { data: null, error: { message: data.error } };
+      const text = await response.text();
+      try {
+        const data = JSON.parse(text);
+        if (response.ok) {
+          return { data: data.user, error: null };
+        } else {
+          return {
+            data: null,
+            error: { message: data.error || "Registration failed" },
+          };
+        }
+      } catch (jsonError) {
+        console.error("Invalid JSON response:", text);
+        return {
+          data: null,
+          error: { message: "Server error - invalid response" },
+        };
       }
     } catch (error: any) {
-      return { data: null, error: { message: "Network error" } };
+      console.error("Network error:", error);
+      return { data: null, error: { message: "Network connection failed" } };
     }
   };
 
